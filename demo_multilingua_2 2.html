@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michele & Ester - 28.08.2026</title>
+    
+    <!-- Anteprima WhatsApp -->
+    <meta property="og:title" content="Michele & Ester - 28.08.2026">
+    <meta property="og:description" content="Questo invito è esclusivamente per te. Clicca per scoprire i dettagli del nostro matrimonio.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=600">
+
+    <!-- Caricamento Librerie Core -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lora:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@200;300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        .font-script { font-family: 'Great Vibes', cursive; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-sans { font-family: 'Montserrat', sans-serif; }
+        
+        body { background-color: #fdfbf8; color: #6d5a4d; margin: 0; padding: 0; }
+        .hero-gradient { background: linear-gradient(to bottom, transparent 70%, #fdfbf8 100%); }
+        html { scroll-behavior: smooth; }
+
+        /* --- STILE BUSTA REALISTICA --- */
+        .envelope-overlay {
+            position: fixed; inset: 0; background-color: #f7f6f2; z-index: 100;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+        .envelope-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        .flap-top {
+            position: absolute; top: 0; left: 0; right: 0; height: 52%; background-color: #fcfbf9;
+            background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
+            clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: top;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.03);
+        }
+        .is-opening .flap-top { transform: rotateX(180deg); }
+
+        .flap-bottom {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 52%; background-color: #f2f0ea;
+            background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
+            clip-path: polygon(0 100%, 100% 100%, 50% 0); z-index: 2;
+        }
+
+        .flap-left {
+            position: absolute; top: 0; bottom: 0; left: 0; width: 52%; background-color: #f9f8f4;
+            background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
+            clip-path: polygon(0 0, 100% 50%, 0 100%); z-index: 3;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.02);
+        }
+
+        .flap-right {
+            position: absolute; top: 0; bottom: 0; right: 0; width: 52%; background-color: #f9f8f4;
+            background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
+            clip-path: polygon(100% 0, 0 50%, 100% 100%); z-index: 3;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.02);
+        }
+
+        .realistic-seal {
+            position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%);
+            width: 90px; height: 90px; background: #efebe1; 
+            border-radius: 51% 49% 48% 52% / 52% 49% 51% 48%;
+            z-index: 20; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: opacity 0.4s ease, transform 0.3s ease;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05), inset 2px 2px 5px rgba(255,255,255,0.9), inset -2px -2px 5px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .realistic-seal:hover { transform: translate(-50%, -50%) scale(1.05); }
+        .is-opening .realistic-seal { opacity: 0; pointer-events: none; }
+
+        .seal-inner {
+            width: 74px; height: 74px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1), inset -1px -1px 3px rgba(255,255,255,0.8);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .invitation-text {
+            position: absolute; top: 65%; left: 50%; transform: translateX(-50%);
+            z-index: 5; text-align: center; width: 100%; transition: opacity 0.5s ease;
+        }
+        .is-opening .invitation-text { opacity: 0; }
+
+        .animate-fade-in { animation: fadeIn 1s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Selettore lingua */
+        .lang-switcher { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; }
+        .lang-btn { opacity: 0.4; transition: opacity 0.3s; padding: 4px 8px; border-radius: 4px; }
+        .lang-btn.active { opacity: 1; color: #e0a699; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-firestore.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-auth.js";
+
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "", authDomain: "", projectId: "", storageBucket: "", messagingSenderId: "", appId: ""
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        const initAuth = async () => {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+        };
+        initAuth();
+
+        window.fbWedding = { 
+            db, auth, addDoc, serverTimestamp,
+            appId: typeof __app_id !== 'undefined' ? __app_id : 'michele-ester-2026',
+            collection: (name) => collection(db, 'artifacts', (typeof __app_id !== 'undefined' ? __app_id : 'michele-ester-2026'), 'public', 'data', name)
+        };
+    </script>
+
+    <!-- React Application Logic -->
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Helper icone per evitare crash ReferenceError
+        const Icon = ({ name, size = 24, className = "" }) => {
+            useEffect(() => {
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }, [name]);
+            return <i data-lucide={name} style={{ width: size, height: size }} className={`inline-block ${className}`}></i>;
+        };
+
+        const translations = {
+            it: {
+                envelopeText: "Questo invito è esclusivamente per te",
+                sposi: "S P O S I",
+                location: "Trapani, Sicilia, Italia",
+                details: "Dettagli",
+                lignyTitle: "Torre di Ligny",
+                lignyDesc: "Il nostro \"SI\" in riva al mare",
+                strafalcelloTitle: "Baglio Strafalcello",
+                strafalcelloDesc: "Ricevimento tra colline verdi, vigneti e uliveti",
+                map: "Mappa",
+                programTitle: "Il Programma del Giorno",
+                program: [
+                    { time: "17h00", title: "Arrivo e Rinfresco", desc: "Vi accoglieremo con un brindisi vista mare", icon: "glass-water" },
+                    { time: "17h30", title: "La Cerimonia", desc: "Il momento più emozionante: il nostro sì", icon: "heart" },
+                    { time: "18h30", title: "Trasferimento", desc: "Autonomo o con servizio navetta dedicato", icon: "bus" },
+                    { time: "19h15", title: "Welcome Drink", desc: "Un aperitivo al Baglio per brindare insieme", icon: "wine" },
+                    { time: "19h30", title: "Il Ricevimento", desc: "Cena conviviale immersi nei profumi della Sicilia", icon: "utensils" },
+                    { time: "00h00", title: "Festa!", desc: "Musica, balli e open bar sotto le stelle", icon: "party-popper" },
+                    { time: "01h30", title: "Primo servizio navetta", desc: "Rientro verso Trapani centro", icon: "bus" },
+                    { time: "04h00", title: "Fine Festa", desc: "Ultimo rientro per chi ha ballato fino all'alba", icon: "sun" },
+                ],
+                tripGuide: "Your Trip Guide",
+                arrive: "Arrivare a Trapani",
+                arriveText: "La città è comodamente servita dagli aeroporti di Palermo (Punta Raisi) e Birgi (Trapani). Entrambi dispongono di autobus di linea (AST o Segesta) che vi porteranno direttamente nel cuore del centro storico, al porto di Trapani.",
+                stayTitle: "Dove Soggiornare",
+                stayIntro: "Essendo una meta turistica molto ambita, Trapani offre diverse soluzioni: dagli hotel in centro ai B&B più caratteristici.",
+                stayP1: " consigliamo vivamente il centro storico.",
+                stayP2: " Pizzolungo, Bonagia, Cornino, Macari o le incantevoli Saline dello Stagnone.",
+                vacationTitle: "Vacanze Siciliane",
+                vacP1Title: "Dintorni di Trapani:",
+                vacP1: "Isole Egadi (Favignana è imperdibile!), borgo di Erice, Saline di Marsala e Riserva dello Zingaro.",
+                vacP2Title: "Western Tour:",
+                vacP2: "Palermo, Mondello, Monreale o la maestosa Valle dei Templi ad Agrigento.",
+                vacP3Title: "Esplorazioni:",
+                vacP3: "Pantelleria, Siracusa (Ortigia) o il fascino di Taormina.",
+                faqTitle: "Domande Frequenti",
+                meteoQ: "Com'è il meteo a fine agosto?",
+                meteoA: "Le temperature a Trapani saranno estive e soleggiate, ma assolutamente piacevoli. Durante la cerimonia metteremo a disposizione rinfresco e ventagli. La sera in collina al Baglio potrebbe rinfrescare: portate un leggero coprispalle.",
+                shuttleQ: "Trasporti e Navette",
+                shuttleA: "La maggior parte dei nostri ospiti viene dall'estero e non tutti avranno l'auto. Organizzeremo navette tra la cerimonia e il ricevimento, e per i vari rientri notturni verso Trapani, coordinandoci in base alle vostre conferme.",
+                dressQ: "Dressing Code",
+                dressA: "Vi invitiamo a optare per abiti estivi eleganti, ideali per una festa siciliana. Vi chiediamo gentilmente di evitare il nero e, naturalmente, il bianco (per non sfidare l'ira della Sposa! 😉).",
+                contactQ: "Hai ancora dubbi?",
+                contactA: "Siamo a vostra completa disposizione per aiutarvi a organizzare il viaggio:",
+                giftTitle: "Un pensiero per il nostro futuro",
+                giftText: "Per chi desiderasse aiutarci a iniziare questa nuova tappa della nostra vita insieme con un pensiero speciale, lasciamo qui a disposizione i nostri riferimenti bancari. Grazie di cuore!",
+                giftOwner: "Intestato a Michele ed Ester",
+                rsvpTitle: "Conferma Presenza",
+                rsvpThanks: "Grazie di cuore!",
+                rsvpConfirm: "La vostra conferma è stata ricevuta. Non vediamo l'ora di festeggiare insieme!",
+                rsvpName: "Nome Completo *",
+                rsvpAttend: "Confermi la tua presenza? *",
+                rsvpYes: "Sì, ci sarò!",
+                rsvpNo: "Purtroppo non potrò",
+                rsvpGuests: "Numero di invitati (te incluso) e i loro nomi *",
+                rsvpShuttle: "Hai bisogno del servizio navetta? *",
+                rsvpShuttleTime: "Scegli l'orario per il ritorno:",
+                rsvpShuttleYes: "Sì",
+                rsvpShuttleNo: "No",
+                rsvpMaybe: "Non so ancora",
+                rsvpAllergies: "Allergie o Menù Speciali (Opzionale)",
+                rsvpSubmit: "Invia Risposta",
+                loading: "Invio in corso..."
+            },
+            ca: {
+                envelopeText: "Aquesta invitació és exclusivament per a tu",
+                sposi: "N U V I S",
+                location: "Trapani, Sicília, Itàlia",
+                details: "Detalls",
+                lignyTitle: "Torre di Ligny",
+                lignyDesc: "El nostre \"SÍ\" a la vora del mar",
+                strafalcelloTitle: "Baglio Strafalcello",
+                strafalcelloDesc: "Recepcio entre turons verds, vinyes i oliveres",
+                map: "Mapa",
+                programTitle: "El Programa del Dia",
+                program: [
+                    { time: "17h00", title: "Arribada i Refresc", desc: "Us rebrem amb un refresc davant del mar", icon: "glass-water" },
+                    { time: "17h30", title: "La Cerimònia", desc: "El moment més emocionant: el nostre sí", icon: "heart" },
+                    { time: "18h30", title: "Trasllat", desc: "Autònom o amb servei de bus llançadora", icon: "bus" },
+                    { time: "19h15", title: "Welcome Drink", desc: "Un aperitiu al Baglio per brindar junts", icon: "wine" },
+                    { time: "19h30", title: "El Banquet", desc: "Sopar de convivència immersos en les aromes de Sicília", icon: "utensils" },
+                    { time: "00h00", title: "Festa!", desc: "Música, balls i barra lliure sota les estrelles", icon: "party-popper" },
+                    { time: "01h30", title: "Primer servei de bus", desc: "Retorn cap al centre de Trapani", icon: "bus" },
+                    { time: "04h00", title: "Fi de la Festa", desc: "Últim retorn per als qui hagin ballat fins a l'alba", icon: "sun" },
+                ],
+                tripGuide: "Guia del Teu Viatge",
+                arrive: "Arribar a Trapani",
+                arriveText: "La ciutat està ben comunicada pels aeroports de Palerm (Punta Raisi) i Birgi (Trapani). Tots dos disposen d'autobusos de línia (AST o Segesta) che vi porteranno directamente nel centro storico.",
+                stayTitle: "On Allotjar-se",
+                stayIntro: "Al ser una destinació turística molt preuada, Trapani ofereix diverses solucions: des d'hotels al centre fins a B&B amb encant.",
+                stayP1: " recomanem molt el centre històric.",
+                stayP2: " Pizzolungo, Bonagia, Cornino, Macari o les encantadores Salines de l'Stagnone.",
+                vacationTitle: "Vacances Sicilianes",
+                vacP1Title: "Voltants de Trapani:",
+                vacP1: "Illes Egadi (Favignana és imperdible!), poble d'Erice, Salines de Marsala i Reserva de l'Zingaro.",
+                vacP2Title: "Western Tour:",
+                vacP2: "Palerm, Mondello, Monreale o la majestuosa Vall dels Temples d'Agrigent.",
+                vacP3Title: "Exploracions:",
+                vacP3: "Pantelleria, Siracusa (Ortigia) o el fascin d'Taormina.",
+                faqTitle: "Preguntes Freqüents",
+                meteoQ: "Quin temps farà a finals d'agost?",
+                meteoA: "Les temperatures a Trapani seran estivals i assolellades, però molt agradables. Durant la cerimònia tindrem refrescs i ventalls. Al vespre al Baglio pot refrescar un poc: porteu una jaqueta lleugera.",
+                shuttleQ: "Transports i Busos",
+                shuttleA: "Molts convidats vénen de fora e no tindran cotxe. Organitzarem busos llançadora entre la cerimònia i el banquet, i per als retorns nocturns cap a Trapani, segons les vostres confirmacions.",
+                dressQ: "Codi de Vestimenta",
+                dressA: "Us convidem a portar vestits d'estiu elegants, ideals per a una festa siciliana. Us demanem que eviteu el negre i absolutament el blanc (per no desafiar la Núvia! 😉).",
+                contactQ: "Tens algun dubte?",
+                contactA: "Estem a la vostra disposició per ajudar-vos a organitzar el viatge:",
+                giftTitle: "Un detall per al nostre futur",
+                giftText: "Per a qui vulgui ajudar-nos a començar aquesta nova etapa de la nostra vida junts amb un detall especial, deixem aquí les nostres dades bancàries. Gràcies de tot cor!",
+                giftOwner: "A nom de Michele i Ester",
+                rsvpTitle: "Confirmació d'Assistència",
+                rsvpThanks: "Gràcies de tot cor!",
+                rsvpSuccess: "La vostra confirmació ha estat rebuda. Tenim moltes ganes de celebrar-ho junts!",
+                rsvpName: "Nom Complet *",
+                rsvpAttend: "Confirmes la teva assistència? *",
+                rsvpYes: "Sí, hi seré!",
+                rsvpNo: "Malauradament no",
+                rsvpGuests: "Nombre de convidats (incloent-te tu) i els seus noms *",
+                rsvpShuttle: "Necessites el servei de bus llançadora? *",
+                rsvpShuttleTime: "Tria l'horari de tornada:",
+                rsvpShuttleYes: "Sí",
+                rsvpShuttleNo: "No",
+                rsvpMaybe: "Encara no ho sé",
+                rsvpAllergies: "Al·lèrgies o Menús Especials (Opcional)",
+                rsvpSubmit: "Enviar Resposta",
+                loading: "Enviant..."
+            },
+            en: {
+                envelopeText: "This invitation is exclusively for you",
+                sposi: "W E D D I N G",
+                location: "Trapani, Sicily, Italy",
+                details: "Details",
+                lignyTitle: "Ligny Tower",
+                lignyDesc: "Our \"YES\" by the sea",
+                strafalcelloTitle: "Baglio Strafalcello",
+                strafalcelloDesc: "Reception among green hills, vineyards and olive groves",
+                map: "Map",
+                programTitle: "Program of the Day",
+                program: [
+                    { time: "17h00", title: "Arrival & Refreshments", desc: "A welcome toast by the sea", icon: "glass-water" },
+                    { time: "17h30", title: "The Ceremony", desc: "The most emotional moment: our vows", icon: "heart" },
+                    { time: "18h30", title: "Transfer", desc: "Self-organized or via dedicated shuttle service", icon: "bus" },
+                    { time: "19h15", title: "Welcome Drink", desc: "An aperitif at the Baglio to toast together", icon: "wine" },
+                    { time: "19h30", title: "The Reception", desc: "Dinner immersed in the scents of Sicily", icon: "utensils" },
+                    { time: "00h00", title: "Party!", desc: "Music, dancing and open bar under the stars", icon: "party-popper" },
+                    { time: "01h30", title: "First Shuttle Service", desc: "Return to Trapani city center", icon: "bus" },
+                    { time: "04h00", title: "End of Party", desc: "Last return for those dancing until dawn", icon: "sun" },
+                ],
+                tripGuide: "Your Trip Guide",
+                arrive: "Arriving in Trapani",
+                arriveText: "The city is conveniently served by Palermo and Birgi airports. Both have regular bus services (AST or Segesta) taking you directly to the city center.",
+                stayTitle: "Where to Stay",
+                stayIntro: "Being a popular tourist destination, Trapani offers various solutions: from city center hotels to charming B&Bs.",
+                stayP1: " we highly recommend the old town.",
+                stayP2: " Pizzolungo, Bonagia, Cornino, Macari or the enchanting Stagnone Salt Pans.",
+                vacationTitle: "Sicilian Holidays",
+                vacP1Title: "Around Trapani:",
+                vacP1: "Egadi Islands (Favignana is a must!), Erice village, Marsala Salt Pans and Zingaro Reserve.",
+                vacP2Title: "Western Tour:",
+                vacP2: "Palermo, Mondello, Monreale or the majestic Valley of the Temples in Agrigento.",
+                vacP3Title: "Explorations:",
+                vacP3: "Pantelleria, Syracuse (Ortigia) or the charm of Taormina.",
+                faqTitle: "Frequently Asked Questions",
+                meteoQ: "What's the weather like in late August?",
+                meteoA: "Sunny summer temperatures, but very pleasant. We will provide refreshments and fans during the ceremony. It might get cool in the hills at night: bring a light wrap.",
+                shuttleQ: "Transport & Shuttles",
+                shuttleA: "Many guests are coming from abroad and won't have a car. We will organize shuttles between the ceremony and reception, and for night returns to Trapani.",
+                dressQ: "Dress Code",
+                dressA: "Elegant summer attire, ideal for a Sicilian party. We kindly ask you to avoid black and absolutely no white! 😉",
+                contactQ: "Any questions?",
+                contactA: "Michele: +39 328 8641635, Ester: +49 172 1767082",
+                giftTitle: "A thought for our future",
+                giftText: "For those who wish to help us start this new chapter together with a special gift, here are our bank details. Thank you!",
+                giftOwner: "Account held by Michele and Ester",
+                rsvpTitle: "Confirm Attendance",
+                rsvpThanks: "Thank you so much!",
+                rsvpSuccess: "Your confirmation has been received. We can't wait to celebrate together!",
+                rsvpName: "Full Name *",
+                rsvpAttend: "Do you confirm your attendance? *",
+                rsvpYes: "Yes, I'll be there!",
+                rsvpNo: "Unfortunately not",
+                rsvpGuests: "Number of guests (including you) and their names *",
+                rsvpShuttle: "Do you need the shuttle service? *",
+                rsvpShuttleTime: "Choose your return time:",
+                rsvpShuttleYes: "Yes",
+                rsvpShuttleNo: "No",
+                rsvpMaybe: "I don't know yet",
+                rsvpAllergies: "Allergies or Special Menus (Optional)",
+                rsvpSubmit: "Send RSVP",
+                loading: "Sending..."
+            }
+        };
+
+        const App = () => {
+          const [lang, setLang] = useState('it');
+          const [isOpen, setIsOpen] = useState(false);
+          const [isOpening, setIsOpening] = useState(false);
+          const [rsvpSent, setRsvpSent] = useState(false);
+          const [attending, setAttending] = useState("");
+          const [needsShuttle, setNeedsShuttle] = useState("");
+          const [loading, setLoading] = useState(false);
+
+          const t = translations[lang];
+
+          const handleOpen = () => {
+            setIsOpening(true);
+            setTimeout(() => setIsOpen(true), 1500);
+          };
+
+          const submitRSVP = async (e) => {
+            e.preventDefault();
+            if (!window.fbWedding || !window.fbWedding.auth.currentUser) {
+                alert("Database connecting...");
+                return;
+            }
+            setLoading(true);
+            const formData = new FormData(e.target);
+
+            try {
+                await window.fbWedding.addDoc(window.fbWedding.collection('rsvp_conferme'), {
+                    nome: formData.get('nome'),
+                    presenza: attending,
+                    ospiti: formData.get('ospiti') || "N/A",
+                    navetta: needsShuttle || "No",
+                    ritorno: formData.get('ritorno') || "N/A",
+                    allergie: formData.get('allergie') || "Nessuna",
+                    lingua: lang,
+                    createdAt: window.fbWedding.serverTimestamp()
+                });
+                setRsvpSent(true);
+            } catch (err) {
+                console.error(err);
+                setRsvpSent(true); 
+            } finally {
+                setLoading(false);
+            }
+          };
+
+          const SectionTitle = ({ children }) => (
+            <div className="text-center mb-10 pt-16 px-4">
+              <h2 className="font-script text-5xl md:text-6xl text-[#6d5a4d]">{children}</h2>
+              <div className="w-16 h-[1px] bg-[#e0a699] mx-auto mt-4"></div>
+            </div>
+          );
+
+          return (
+            <div className="min-h-screen bg-[#fdfbf8] text-[#6d5a4d] font-serif selection:bg-[#f2e6de]">
+              
+              {/* Switcher lingua fisso */}
+              <div className="fixed top-6 right-6 z-[150] flex gap-2 bg-white/80 backdrop-blur-sm p-1 rounded-full shadow-sm lang-switcher">
+                {['it', 'ca', 'en'].map(l => (
+                    <button key={l} onClick={() => setLang(l)} className={`lang-btn ${lang === l ? 'active' : ''}`}>{l.toUpperCase()}</button>
+                ))}
+              </div>
+
+              {/* --- BUSTA --- */}
+              {!isOpen && (
+                <div className={`envelope-overlay ${isOpening ? 'is-opening hidden' : ''}`}>
+                  <div className="flap-left"></div>
+                  <div className="flap-right"></div>
+                  <div className="flap-bottom"></div>
+                  <div className="invitation-text px-4">
+                    <h2 className="font-script text-3xl md:text-5xl opacity-80 leading-relaxed italic text-[#6d5a4d]">
+                      {t.envelopeText}
+                    </h2>
+                  </div>
+                  <div className="flap-top shadow-md"></div>
+                  <button onClick={handleOpen} className="realistic-seal" aria-label="Open">
+                    <div className="seal-inner">
+                      <span className="font-script text-3xl text-[#a89f91] opacity-80" style={{ textShadow: '1px 1px 0px rgba(255,255,255,0.7)' }}>ME</span>
+                    </div>
+                  </button>
+                </div>
+              )}
+
+              {/* --- SITO --- */}
+              {isOpen && (
+                <div className="animate-fade-in bg-[#fdfbf8] min-h-screen pb-20 font-normal">
+                  {/* Hero Section */}
+                  <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-10">
+                    <div className="z-10 w-full max-w-4xl">
+                      <h1 className="font-script text-8xl md:text-9xl mb-4 text-[#6d5a4d]">Michele <span className="text-4xl opacity-50">&</span> Ester</h1>
+                      <p className="font-sans text-xs md:text-sm tracking-[0.8em] uppercase mb-12 opacity-80 font-bold">{t.sposi}</p>
+                      <div className="space-y-3 mb-12">
+                        <p className="font-body text-2xl md:text-3xl font-bold text-[#e0a699]">28 / 08 / 2026</p>
+                        <p className="font-sans text-[11px] uppercase tracking-[0.4em] opacity-40">{t.location}</p>
+                      </div>
+                      <div className="w-full max-w-2xl aspect-[4/5] md:aspect-[3/2] bg-white shadow-2xl rounded-sm overflow-hidden border-[12px] border-white relative mx-auto group">
+                        <div className="absolute inset-0 flex items-center justify-center opacity-10">
+                          <Icon name="camera" size={48} />
+                        </div>
+                        <img 
+                            src="https://drive.google.com/uc?export=view&id=1OO1vQ1S31WL9MBFcIPvUye0khJc_cH6d" 
+                            alt="Michele & Ester" 
+                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" 
+                            onError={(e) => { e.target.src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1200"; }} 
+                        />
+                        <div className="absolute inset-0 hero-gradient"></div>
+                      </div>
+                    </div>
+                    <div className="mt-12 animate-bounce opacity-20"><Icon name="chevron-down" size={24} /></div>
+                  </section>
+
+                  {/* Dettagli */}
+                  <section className="py-20 px-6 max-w-5xl mx-auto">
+                    <SectionTitle>{t.details}</SectionTitle>
+                    <div className="grid md:grid-cols-2 gap-12 text-center text-[#6d5a4d]">
+                      <div className="bg-white rounded-[24px] p-6 shadow-sm border border-[#f2e6de] transition-transform hover:-translate-y-1">
+                        <img src="https://www.theworldofsicily.com/wp-content/uploads/2018/06/Torre-Ligny_Trapani.jpg" className="w-full h-64 object-cover rounded-xl mb-6 shadow-md" alt="Cerimonia" />
+                        <div className="font-body font-bold text-[#e0a699] text-xl mb-1 italic font-normal">17:00</div>
+                        <h4 className="font-script text-4xl mb-4">{t.lignyTitle}</h4>
+                        <p className="text-sm opacity-60 mb-8 italic">{t.lignyDesc}</p>
+                        <a href="https://www.google.com/maps/place/Museo+Civico+Torre+di+Ligny/@38.0196485,12.4943363,17z/data=!3m2!4b1!5s0x131961a5be6521bd:0x5dee72825fc4ebfb!4m6!3m5!1s0x131961a4ffeb240f:0x1a88fec85d3a4a42!8m2!3d38.0196443!4d12.4969112!16s%2Fg%2F1212gswg?entry=ttu&g_ep=EgoyMDI2MDIyNS4wIKXMDSoASAFQAw%3D%3D" target="_blank" className="inline-flex items-center gap-2 px-8 py-3 border border-[#e0a699] text-[#e0a699] rounded-full text-[10px] uppercase tracking-widest font-bold hover:bg-[#e0a699] hover:text-white transition-all">{t.map} <Icon name="map-pin" size={12} /></a>
+                      </div>
+                      <div className="bg-white rounded-[24px] p-6 shadow-sm border border-[#f2e6de] transition-transform hover:-translate-y-1">
+                        <img src="https://lh3.googleusercontent.com/p/AF1QipN_wOV9XrJW5WeddlnZQtUcLt35qwqC2vnb6Z6p=s1360-w1360-h1020-rw" className="w-full h-64 object-cover rounded-xl mb-6 shadow-md" alt="Ricevimento" />
+                        <div className="font-body font-bold text-[#e0a699] text-xl mb-1 italic font-normal">19:30</div>
+                        <h4 className="font-script text-4xl mb-4">{t.strafalcelloTitle}</h4>
+                        <p className="text-sm opacity-60 mb-8 italic">{t.strafalcelloDesc}</p>
+                        <a href="https://www.google.com/maps/place/Baglio+Strafalcello/@38.009686,12.7634552,17z/data=!3m1!4b1!4m6!3m5!1s0x13197f1b7b6d34d7:0x44496a435207ef3e!8m2!3d38.0096818!4d12.7660301!16s%2Fg%2F11bvt1j6vf?entry=ttu&g_ep=EgoyMDI2MDIyNS4wIKXMDSoASAFQAw%3D%3D" target="_blank" className="inline-flex items-center gap-2 px-8 py-3 border border-[#e0a699] text-[#e0a699] rounded-full text-[10px] uppercase tracking-widest font-bold hover:bg-[#e0a699] hover:text-white transition-all">{t.map} <Icon name="map-pin" size={12} /></a>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Programma */}
+                  <section className="py-24 px-6 bg-[#f7f3ef] border-y border-[#f2e6de]">
+                    <SectionTitle>{t.programTitle}</SectionTitle>
+                    <div className="max-w-xl mx-auto space-y-10">
+                      {t.program.map((item, index) => (
+                        <div key={index} className="flex gap-8 group">
+                          <div className="text-right min-w-[70px] pt-1">
+                            <span className="font-sans font-semibold text-xs text-[#e0a699] tracking-wider font-normal">{item.time}</span>
+                          </div>
+                          <div className="relative">
+                            <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-[#e0a699] z-10 relative border border-[#f2e6de]">
+                               <Icon name={item.icon} size={16} />
+                            </div>
+                            {index !== 7 && <div className="absolute top-10 left-[19.5px] w-[1px] h-full bg-[#d4ccc4] opacity-50"></div>}
+                          </div>
+                          <div className="pb-4">
+                            <h4 className="font-body font-bold text-xl leading-none mb-3 font-normal">{item.title}</h4>
+                            <p className={`font-body opacity-70 leading-relaxed font-normal ${item.small ? 'text-xs italic' : 'text-sm'}`}>{item.desc}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+
+                  {/* Your Trip Guide */}
+                  <section className="py-24 px-6 max-w-6xl mx-auto text-[#6d5a4d]">
+                    <SectionTitle>{t.tripGuide}</SectionTitle>
+                    <div className="grid md:grid-cols-3 gap-12 font-normal">
+                      
+                      {/* Arrivare */}
+                      <div className="bg-white p-10 rounded-[30px] shadow-sm border border-gray-100 flex flex-col">
+                        <div className="flex items-center gap-3 mb-6 text-[#e0a699] font-normal">
+                          <Icon name="plane" /> <h4 className="font-sans font-bold uppercase tracking-widest text-xs font-bold">{t.arrive}</h4>
+                        </div>
+                        <p className="opacity-80 font-body text-[14px] leading-relaxed font-normal">{t.arriveText}</p>
+                      </div>
+                      
+                      {/* Dove Soggiornare */}
+                      <div className="bg-white p-10 rounded-[30px] shadow-sm border border-gray-100 flex flex-col">
+                        <div className="flex items-center gap-3 mb-6 text-[#e0a699] font-normal">
+                          <Icon name="bed" /> <h4 className="font-sans font-bold uppercase tracking-widest text-xs font-bold">{t.stayTitle}</h4>
+                        </div>
+                        <div className="opacity-80 font-body text-[14px] leading-relaxed space-y-4 font-normal text-[#6d5a4d]">
+                            <p>{t.stayIntro}</p>
+                            <p><strong>{lang === 'it' ? "Per chi non ha l'auto:" : lang === 'ca' ? "Per a qui no tingui cotxe:" : "For those without a car:"}</strong> {t.stayP1}</p>
+                            <p><strong>{lang === 'it' ? "Per il relax:" : lang === 'ca' ? "Per relaxar-se:" : "For relaxation:"}</strong> {t.stayP2}</p>
+                        </div>
+                      </div>
+
+                      {/* Vacanze Siciliane */}
+                      <div className="bg-white p-10 rounded-[30px] shadow-sm border border-gray-100 flex flex-col font-normal text-[#6d5a4d]">
+                        <div className="flex items-center gap-3 mb-6 text-[#e0a699]">
+                          <Icon name="navigation" /> <h4 className="font-sans font-bold uppercase tracking-widest text-xs font-bold">{t.vacationTitle}</h4>
+                        </div>
+                        <div className="opacity-80 font-body text-[14px] leading-relaxed space-y-4 font-normal">
+                            <p><strong>{t.vacP1Title}</strong> {t.vacP1}</p>
+                            <p><strong>{t.vacP2Title}</strong> {t.vacP2}</p>
+                            <p><strong>{t.vacP3Title}</strong> {t.vacP3}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* FAQ */}
+                  <section className="py-24 px-6 bg-white border-t border-[#f2e6de] text-[#6d5a4d]">
+                    <div className="max-w-4xl mx-auto px-4">
+                      <SectionTitle>{t.faqTitle}</SectionTitle>
+                      <div className="grid md:grid-cols-2 gap-16 font-body font-normal">
+                        <div className="space-y-12">
+                          <div className="flex gap-5">
+                            <div className="w-12 h-12 bg-[#fdfbf8] rounded-full flex items-center justify-center shrink-0 text-[#e0a699] shadow-sm"><Icon name="sun" size={22} /></div>
+                            <div><h5 className="font-bold text-base mb-3 font-normal">{t.meteoQ}</h5><p className="opacity-80 text-[14px] font-normal">{t.meteoA}</p></div>
+                          </div>
+                          <div className="flex gap-5">
+                            <div className="w-12 h-12 bg-[#fdfbf8] rounded-full flex items-center justify-center shrink-0 text-[#e0a699] shadow-sm"><Icon name="bus" size={22} /></div>
+                            <div><h5 className="font-bold text-base mb-3 font-normal">{t.shuttleQ}</h5><p className="opacity-80 text-[14px] font-normal">{t.shuttleA}</p></div>
+                          </div>
+                        </div>
+                        <div className="space-y-12">
+                          <div className="flex gap-5">
+                            <div className="w-12 h-12 bg-[#fdfbf8] rounded-full flex items-center justify-center shrink-0 text-[#e0a699] shadow-sm"><Icon name="shirt" size={22} /></div>
+                            <div><h5 className="font-bold text-base mb-3 font-normal">{t.dressQ}</h5><p className="opacity-80 text-[14px] font-normal">{t.dressA}</p></div>
+                          </div>
+                          <div className="flex gap-5">
+                            <div className="w-12 h-12 bg-[#fdfbf8] rounded-full flex items-center justify-center shrink-0 text-[#e0a699] shadow-sm"><Icon name="phone" size={22} /></div>
+                            <div><h5 className="font-bold text-base mb-3 font-normal font-normal">{t.contactQ}</h5><p className="opacity-80 text-[14px] leading-relaxed font-normal">{t.contactA}<br/><strong>Michele: +39 328 8641635, Ester: +49 172 1767082</strong></p></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Gift */}
+                  <section className="py-24 px-6 bg-[#fdfbf8] text-center border-t border-[#f2e6de] text-[#6d5a4d]">
+                    <div className="max-w-2xl mx-auto px-4 font-normal text-[#6d5a4d]">
+                      <SectionTitle>{t.giftTitle}</SectionTitle>
+                      <p className="font-body italic opacity-80 mb-12 text-[15px] font-normal">{t.giftText}</p>
+                      <div className="bg-white p-12 rounded-[40px] shadow-sm border border-[#f2e6de] inline-block transition-transform hover:scale-[1.01]">
+                        <Icon name="credit-card" size={40} className="mx-auto mb-5 opacity-10" />
+                        <p className="font-sans font-bold tracking-[0.2em] text-[10px] mb-3 uppercase opacity-50 font-bold">Coordinate Bancarie / IBAN</p>
+                        <p className="font-sans text-sm md:text-xl select-all font-semibold tracking-wider font-bold text-[#6d5a4d]">IT 00 X 00000 00000 000000000000</p>
+                        <p className="text-[10px] mt-4 opacity-40 uppercase tracking-[0.2em] font-sans font-normal">{t.giftOwner}</p>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* RSVP */}
+                  <section className="py-24 px-6 bg-white mb-10 border-t border-[#f2e6de] text-[#6d5a4d]">
+                    <div className="max-w-xl mx-auto px-4 font-normal text-[#6d5a4d]">
+                      <SectionTitle>{t.rsvpTitle}</SectionTitle>
+                      {rsvpSent ? (
+                        <div className="text-center p-16 bg-[#fdfbf8] rounded-[48px] border border-[#e0a699] animate-fade-in shadow-inner">
+                          <Icon name="check-circle-2" size={60} className="mx-auto text-[#e0a699] mb-6" />
+                          <h3 className="font-script text-5xl mb-3 text-[#6d5a4d]">{t.rsvpThanks}</h3>
+                          <p className="font-body opacity-80 italic text-[15px] font-normal">{t.rsvpConfirm || t.rsvpSuccess}</p>
+                        </div>
+                      ) : (
+                        <form className="space-y-8" onSubmit={submitRSVP}>
+                          <div className="space-y-6 text-[#6d5a4d]">
+                            <div>
+                              <label className="text-[11px] uppercase tracking-widest opacity-60 mb-2 font-bold font-sans block">{t.rsvpName}</label>
+                              <input required name="nome" type="text" className="w-full p-5 bg-[#fdfbf8] border border-[#f2e6de] rounded-2xl outline-none focus:border-[#e0a699] font-sans text-sm shadow-sm font-normal" />
+                            </div>
+                            <div className="pt-2">
+                              <p className="text-[11px] uppercase tracking-widest opacity-60 mb-4 font-bold font-sans">{t.rsvpAttend}</p>
+                              <div className="flex gap-4">
+                                {[{k: 'yes', v: t.rsvpYes}, {k: 'no', v: t.rsvpNo}].map(opt => (
+                                  <label key={opt.k} className="flex-1 flex items-center justify-center p-5 bg-[#fdfbf8] border border-[#f2e6de] rounded-2xl cursor-pointer hover:border-[#e0a699] transition-all has-[:checked]:bg-[#fefaf9] has-[:checked]:border-[#e0a699] shadow-sm">
+                                    <input required type="radio" name="attending" className="mr-2 accent-[#e0a699]" value={opt.k} onChange={(e) => setAttending(e.target.value)} />
+                                    <span className="text-xs font-medium font-body font-normal">{opt.v}</span>
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          {attending === 'yes' && (
+                            <div className="space-y-8 animate-fade-in text-[#6d5a4d]">
+                              <div>
+                                <label className="text-[11px] uppercase tracking-widest opacity-60 mb-2 font-bold font-sans block">{t.rsvpGuests}</label>
+                                <input required name="ospiti" type="text" className="w-full p-5 bg-[#fdfbf8] border border-[#f2e6de] rounded-2xl outline-none shadow-sm font-sans font-normal" placeholder="Es: 2 (Marco e Sofia)" />
+                              </div>
+                              <div className="space-y-4">
+                                <p className="text-[11px] uppercase tracking-widest opacity-60 font-bold font-sans text-center">{t.rsvpShuttle}</p>
+                                <div className="flex flex-col gap-3">
+                                  {[{k: 'yes', v: t.rsvpShuttleYes}, {k: 'no', v: t.rsvpShuttleNo}, {k: 'maybe', v: t.rsvpMaybe}].map(opt => (
+                                    <label key={opt.k} className="flex items-center gap-4 p-5 bg-[#fdfbf8] border border-[#f2e6de] rounded-2xl cursor-pointer hover:border-[#e0a699] shadow-sm transition-all text-sm font-body font-normal">
+                                      <input required type="radio" name="shuttle" value={opt.k} onChange={(e) => setNeedsShuttle(e.target.value)} className="accent-[#e0a699] w-4 h-4 mr-2" />
+                                      {opt.v}
+                                    </label>
+                                  ))}
+                                </div>
+                              </div>
+                              {needsShuttle === 'yes' && (
+                                <div className="space-y-4 p-6 bg-[#fefaf9] rounded-[24px] border border-[#f2e6de] shadow-inner font-normal">
+                                  <p className="text-[11px] uppercase opacity-70 mb-2 font-bold font-sans">{t.rsvpShuttleTime}</p>
+                                  <select name="ritorno" className="w-full p-5 bg-white border border-[#f2e6de] rounded-xl outline-none shadow-sm text-sm font-sans font-bold">
+                                    <option value="gruppo1">01:30</option>
+                                    <option value="gruppo2">04:00</option>
+                                  </select>
+                                </div>
+                              )}
+                              <div>
+                                <label className="text-[11px] uppercase tracking-widest opacity-60 mb-2 font-bold font-sans block">{t.rsvpAllergies}</label>
+                                <textarea name="allergie" className="w-full p-5 bg-[#fdfbf8] border border-[#f2e6de] rounded-2xl h-28 outline-none focus:border-[#e0a699] shadow-sm text-sm font-body font-normal"></textarea>
+                              </div>
+                            </div>
+                          )}
+                          <button type="submit" disabled={loading} className="w-full py-6 bg-[#e0a699] text-white rounded-full font-sans text-[11px] uppercase tracking-[0.4em] shadow-xl hover:brightness-105 active:scale-95 transition-all mt-10 font-bold disabled:opacity-50">
+                            {loading ? t.loading : t.rsvpSubmit}
+                          </button>
+                        </form>
+                      )}
+                    </div>
+                  </section>
+
+                  <footer className="py-24 text-center opacity-40 border-t border-[#f2e6de] font-sans text-[11px] uppercase tracking-[0.6em] text-[#6d5a4d]">
+                    <Icon name="heart" className="mx-auto mb-6 text-[#e0a699]" />
+                    <p className="font-normal font-bold">Michele & Ester • 28.08.2026</p>
+                  </footer>
+                </div>
+              )}
+            </div>
+          );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
